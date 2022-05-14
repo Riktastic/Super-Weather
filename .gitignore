@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Specific to Super-Weather
+log.txt
+cache.sqlite
+config.ini
+nohup.out
+
 # C extensions
 *.so
 

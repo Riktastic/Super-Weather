@@ -11,7 +11,12 @@ Make your analog weatherstation digital! It currently converts sniffs the radio 
 
 ## What it requires?
 - A Alecto WS-4800/Bresser 5-in-1 (the underlying RTL_433 driver support many devices, you just have to find the right configuration number for your device and tweak the mapping);
+![WS-4800](device.png)
+
 - A RTL-SDR[https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/] USB receiver with a 433MHz or 833MHz antenna (depending on your weatherstation);
+![RTL-SDR](sdr.jpeg)
+
+
 - A small computer. Some examples: Raspberry Pi, Raspberry Pi Zero W.
 
 ## Installation:

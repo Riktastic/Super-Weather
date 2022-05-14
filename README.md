@@ -6,7 +6,7 @@ Make your analog weatherstation digital! It currently converts sniffs the radio 
 - [AerisWeather](https://www.pwsweather.com/aerisweather);
 - [OpenWeathermap](https://openweathermap.org);
 - [Windy](https://windy.com);
-- Your own [Ntfy.sh](https://ntfy.sh/), to receive weatherreports on your mobile phone;
+- Your own [Ntfy.sh](https://ntfy.sh/) instance, to receive weatherreports on your mobile phone;
 - Your own PostGreSQL database (for storing addtional details such as: heat index, wind chill, dewpoint, cloud base).
 
 ## What it requires?

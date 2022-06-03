@@ -10,20 +10,6 @@ print("""
 # - Author: Rik Heijmann
 # - Version: 1.0
 #
-# Copyright (C) 2022 Rik Heijmann
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  You should have received a copy of the GNU General Public License along
-#  with this program; if not, write to the Free Software Foundation, Inc.,
-#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ##
 """)
 
@@ -59,14 +45,16 @@ def getWeatherreports(): # Runs continuesly. Run only once per computer.
     get_count = 0 # Counts the amount of 
 
     log("Startup: Parsing the config file.", "info")
-    get_config = parse() # Parses and recieves the config file.print(
+    get_config = parse() # Parses and recieves the config file.
 
     log("Startup: Opening the cache.", "info")
     get_cache_connection = cache.create_connection(get_config["Cache"]["File"]) # Create a connection to the config file.
+
     log("Startup: Cache has been opened.", "info")
 
     log("Startup: Connecting to the database.", "info")
     get_database_connection = database.create_connection(get_config["Database"]["Host"], get_config["Database"]["Port"], get_config["Database"]["User"], get_config["Database"]["Password"]) # Create a connection to the database.
+
     log("Startup: Connected to the database.", "info")
 
     kill_rtl_433_cmd = "pkill -9 rtl_433"
@@ -81,14 +69,23 @@ def getWeatherreports(): # Runs continuesly. Run only once per computer.
     log("Startup: Ready to start listening for weatherreports.", "info")
     while True: # Runs forever.
         if rtl433_proc.poll() is not None: # Triggers whenever the RTL_433 dongle can't be found.
-            log(f"RTL_433: Exited with code: {str(rtl433_proc.poll())}", "error")
+            log(f"RTL_433: Exited with code, can't continue: {str(rtl433_proc.poll())}", "error")
             sys.exit(rtl433_proc.poll())
+            quit()
+
+        global timer, timeout
+        if (time.process_time() - timer) >= 60*timeout:
+            log(f"Time since last message has passed the {timeout} minutes timeout.")
+            quit()
 
         for line in iter(rtl433_proc.stdout.readline, ''): # run for each line.
             if rtl_output_found_sdr_re.match(line): # Check for certain lines.
                 log(f"RTL_433: Found a SDR: {line.lstrip('Found ').strip()}", "info")
 
             if "time" in line: # If the result contains the word "time", do the following:
+                
+                timer = time.process_time() # Reset the timer.
+
                 line_dict = json.loads(line) # Convert the line to a dictionary by first reading it as JSON.
                 model = line_dict["model"] # Get the model name.
                 model_id = line_dict["id"] # Get the model id.
@@ -123,6 +120,7 @@ def getWeatherreports(): # Runs continuesly. Run only once per computer.
 
                     line_cache = cache.weatherdata() # Creates a class that will be used to store weatherdata.
                     line_cache.device_id = device_id
+                    
                     timestamp_datetime = parser.parse(line_dict["time"]) # Convert the timestamp to a ISO 8601 timestamp (without zone).
 
                     line_cache.timestamp_unix = time.mktime(timestamp_datetime.timetuple())
@@ -146,7 +144,11 @@ def getWeatherreports(): # Runs continuesly. Run only once per computer.
                     get_count+=1 # Count the amount of weathereports that have been saved to the cache.
 
                     if get_count == 1:
-                        log(f"Saved the first weatherreport since starting the handler to the cache. From now on messages will be summarized per x recieved weatherreports.", "info")
+                        log(f"Saved the first weatherreport since starting the handler to the cache.", "info")
+
+                    if get_count == 10:
+                        log(f"Saved the first 10 weatherreports since starting the handler to the cache. From now on messages will be summarized per x received weatherreports.", "info")
+
 
                     if get_count % 1000 == 0:
                         log(f"Saved '{get_count}' weatherreports to the cache.", "info")
@@ -166,6 +168,8 @@ def startScheduler():
 
 
 config = parse()
+timer = time.process_time()
+timeout = 15 #minutes
 
 if config.getboolean('MetOffice','Enabled') == True: schedule.every(config.getint('MetOffice','SendIntervalInMinutes')).minutes.do(metoffice.convertAndSend) ; log("Startup: The Met Office connector has been enabled.", "info")
 if config.getboolean('OpenWeathermap','Enabled') == True: schedule.every(config.getint('OpenWeathermap','SendIntervalInMinutes')).minutes.do(openweathermap.convertAndSend) ; log("Startup: The OpenWeathermap connector has been enabled.", "info")
@@ -183,4 +187,4 @@ thread_getWeatherreports.start()
 thread_startScheduler = threading.Thread(target=startScheduler)
 thread_startScheduler.start()
 
-# print(openweathermap.create("708f60e6c09209ff59541008593a7209", "Swalmen", "Swalmen", "51.229543", "6.048167", "32"))
+# print(openweathermap.create("id", "name", "shortname", "lat", "lon", "height"))

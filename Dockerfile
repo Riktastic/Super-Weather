@@ -1,22 +1,17 @@
-FROM debian:latest
+FROM alpine:latest
 
 WORKDIR /tmp/
 
-RUN apt-get update
-RUN apt-get install -y git libtool libusb-1.0.0-dev librtlsdr-dev rtl-sdr cmake automake python3 python3-pip
-RUN pip3 install paho-mqtt numpy
-RUN git clone https://github.com/merbanan/rtl_433.git
+RUN apk update && \
+    apk add --no-cache --virtual build-deps gcc python3-dev musl-dev && \
+    apk add --no-cache python3 py3-pip py3-pandas postgresql-dev rtl_433 procps
 
-COPY build.sh .
-COPY rtl_433_events.py .
-COPY utils.py .
+RUN adduser -D super-weather
+USER super-weather
 
-# Build rtl_433
-RUN ./build.sh
-
-COPY requirements.txt /opt/app/requirements.txt
 WORKDIR /opt/app
-RUN pip install -r requirements.txt
-COPY . /opt/app
+RUN pip3 install --user --no-cache --upgrade pip setuptools
+RUN pip3 install --user --no-cache  psycopg2 schedule requests
+COPY --chown=super-weathe:super-weather . /opt/app
 
 CMD ["python3", "/opt/app/handler.py"]

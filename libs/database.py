@@ -392,3 +392,7 @@ if connection != -1:
             quit()
 
     log(f"Database: The database is ready.", "info")
+
+else:
+    quit()
+

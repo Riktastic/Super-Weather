@@ -234,16 +234,15 @@ if not exists(file):
     log(f"Cache: Database '{file}' has been created.", "info")
 else:
     connection = create_connection(file)
-    if connection != -1:
-        if not check_table(connection, "weather"):
-            log(f"Cache: could not find the 'weather' table. Trying to create the table.", "info")
-            create_table(connection, sql_create_table_weather)
+    if not check_table(connection, "weather"):
+        log(f"Cache: could not find the 'weather' table. Trying to create the table.", "info")
+        create_table(connection, sql_create_table_weather)
 
-        if not check_table(connection, "device"):
-            log(f"Cache: could not find the 'device' table. Trying to create the table.", "info")
-            create_table(connection, sql_create_table_device)
+    if not check_table(connection, "device"):
+        log(f"Cache: could not find the 'device' table. Trying to create the table.", "info")
+        create_table(connection, sql_create_table_device)
 
-        log(f"Cache: The cache is ready.", "info")
+    log(f"Cache: The cache is ready.", "info")
 
 
 

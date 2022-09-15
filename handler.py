@@ -7,8 +7,7 @@ print("""
 #
 #####################################
 #
-# - Author: Rik Heijmann
-# - Version: 1.0
+# - Author: https://Github.com/Riktastic
 #
 ##
 """)

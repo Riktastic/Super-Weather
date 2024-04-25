@@ -1,5 +1,5 @@
 # Super-Weather
-Make your analog weatherstation digital! It currently converts sniffs the radio signal between an Alecto WS-4800 (also known as Bresser 5-in-1) device and its display.The received data is then being send to:
+Make your analog weatherstation digital! It currently converts the radio signal between an Alecto WS-4800 (also known as Bresser 5-in-1) device, stores the data locally and shares the data with:
 - the [English MetOffice](https://wow.metoffice.gov.uk/);
 - the [Dutch KNMI](https://wow.knmi.nl/);
 - [IBM's Weather.com](https://support.weather.com/s/article/PWS-Upload-Protocol?language=en_US);
@@ -10,7 +10,7 @@ Make your analog weatherstation digital! It currently converts sniffs the radio 
 - Your own PostGreSQL database (for storing addtional details such as: heat index, wind chill, dewpoint, cloud base).
 
 ## What it requires?
-- A Alecto WS-4800/Bresser 5-in-1 (the underlying RTL_433 driver support many devices, you just have to find the right configuration number for your device and tweak the mapping);
+- An Alecto WS-4800/Bresser 5-in-1 (the underlying RTL_433 driver support many devices, you just have to find the right configuration number for your device and tweak the mapping);
 ![WS-4800](device.png)
 
 - A RTL-SDR[https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/] USB receiver with a 433MHz or 833MHz antenna (depending on your weatherstation);
